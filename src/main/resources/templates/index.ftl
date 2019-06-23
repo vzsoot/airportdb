@@ -52,6 +52,9 @@
                 </td>
             </tr>
         </#list>
+        <#if !airports?has_content>
+            <p class="error">No airport found.</p>
+        </#if>
     </table>
     </#if>
 </form>

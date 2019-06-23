@@ -1,12 +1,10 @@
 package com.ibm.interview.airportdb.service;
 
-import com.cloudant.client.api.ClientBuilder;
-import com.cloudant.client.api.CloudantClient;
 import com.ibm.interview.airportdb.dto.Airport;
 import com.ibm.interview.airportdb.dto.AirportDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +15,10 @@ public class CloudantAirportService {
 
   private Logger logger = LoggerFactory.getLogger(CloudantAirportService.class);
 
-  private CloudantClient client;
+  private CloudantService cloudantService;
 
-  public CloudantAirportService(@Value("${cloudant.account}") String account) {
-    this.client = ClientBuilder.account(account)
-      .build();
-
-    logger.info("Cloudant server version: " + this.client.serverVersion());
+  public CloudantAirportService(@Autowired CloudantService cloudantService) {
+    this.cloudantService = cloudantService;
   }
 
   public List<Airport> search(Double latFrom, Double latTo, Double lonFrom, Double lonTo) {
@@ -31,7 +26,7 @@ public class CloudantAirportService {
 
     logger.info("Airportdb query: " + dbQuery);
 
-    return this.client
+    return this.cloudantService.getClient()
       .database("airportdb", false)
       .search("view1/geo")
       .includeDocs(true)
